@@ -22,7 +22,7 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./uploads:/uploads
+      - ./uploads:/app/uploads
   client:
     build:
       context: ./client
