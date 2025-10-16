@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install server deps
+        run: |
+          cd server
+          npm ci
+      - name: Lint server
+        run: |
+          cd server
+          npm run lint
+      - name: Run tests
+        env:
+          MONGO_URI: mongodb://localhost:27017/lms_test
+          JWT_SECRET: testsecret
+          NODE_ENV: test
+        run: |
+          cd server
+          npm test
